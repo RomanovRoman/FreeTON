@@ -12,6 +12,8 @@ contract Calculator {
     }
 
     function add (int x, int y) public pure returns (int) {
+        require(msg.pubkey() == tvm.pubkey(), 102);
+        tvm.accept();
         return x + y;
     }
 }
