@@ -3,17 +3,36 @@ pragma AbiHeader expire;
 
 contract Calculator {
 
-
     constructor() public 
     {
         require(tvm.pubkey() != 0, 101);
         require(msg.pubkey() == tvm.pubkey(), 102);
         tvm.accept();
     }
-
-    function add (int x, int y) public view returns (int) {
-        require(msg.pubkey() == tvm.pubkey(), 102);
+.
+    function addition (int x, int y) public pure returns (int)
+    {
         tvm.accept();
         return x + y;
     }
+
+    function subtraction (int x, int y) public pure returns (int)
+    {
+        tvm.accept();
+        return x - y;
+    }
+
+    function multiplication (int x, int y) public pure returns (int) 
+    {
+        tvm.accept();
+        return x * y;
+    }
+
+    function division (int x, int y) public pure returns (int)
+    {
+        tvm.accept();
+        return x / y;
+    }
 }
+
+//tonos-cli call 0:d5f5cfc4b52d2eb1bd9d3a8e51707872c7ce0c174facddd0e06ae5ffd17d2fcd sendTransaction "{\"dest\":\"0:fa0ed032f649eefb48b55622be3b14dd72e944b9e5af4f00c57c65c6efc6c8f5\",\"value\":1000000000,\"bounce\":false,\"flags\":3,\"payload\":\"\"}" --abi SafeMultisigWallet.abi.json --sign SafeMultisigWallet.keys.json
