@@ -34,5 +34,3 @@ contract Calculator {
         return x / y;
     }
 }
-
-//tonos-cli call 0:d5f5cfc4b52d2eb1bd9d3a8e51707872c7ce0c174facddd0e06ae5ffd17d2fcd sendTransaction "{\"dest\":\"0:fa0ed032f649eefb48b55622be3b14dd72e944b9e5af4f00c57c65c6efc6c8f5\",\"value\":1000000000,\"bounce\":false,\"flags\":3,\"payload\":\"\"}" --abi SafeMultisigWallet.abi.json --sign SafeMultisigWallet.keys.json
