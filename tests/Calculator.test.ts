@@ -1,3 +1,5 @@
+import { expect } from 'chai';
+
 import { TonClient } from "@tonclient/core";
 import { libNode } from "@tonclient/lib-node";
 import TonContract from "./utils/ton-contract";
@@ -5,10 +7,6 @@ import pkgSafeMultisigWallet from "../ton-packages/SafeMultisigWallet.package";
 import pkgCalculator from "../ton-packages/Calculator.package";
 
 
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
-  
 const NETWORK_MAP = {
   LOCAL: "http://0.0.0.0", // localhost
   DEVNET: "https://net.ton.dev",
@@ -32,7 +30,7 @@ const createClient = (url) => {
 };
   
 
-describe("Calculator test", () => {
+describe("Calculator tests", () => {
   let client: TonClient;
   let smcSafeMultisigWallet: TonContract;
   let smcCalculator: TonContract;
@@ -76,6 +74,72 @@ describe("Calculator test", () => {
     await smcCalculator.deploy({
       input: {},
     });
+  });
+
+  describe("addition", () => {
+    it("should calculate 2 + 3 as 5", async () => {
+      const result = await smcCalculator.run({
+        functionName: 'addition',
+        input: {
+          x: 2,
+          y: 3,
+        },
+      });
+
+      const { value0 } = result.value;
+
+      expect(+value0).to.equal(5);
+    });
+
+    it("should not calculate a + b", async () => {
+      try {
+        await smcCalculator.run({
+          functionName: 'addition',
+          input: {
+            x: 'a',
+            y: 'b',
+          },
+        }); 
+      } catch (ex) {
+        expect(ex).to
+        .be.an.instanceOf(Error).and
+        .have.property('code', 306);  
+      }
+    });
+  });
+
+
+  describe("subtraction", () => {
+    it("should calculate 5 - 3 as 2", async () => {
+      const result = await smcCalculator.run({
+        functionName: 'subtraction',
+        input: {
+          x: 5,
+          y: 3,
+        },
+      });
+
+      const { value0 } = result.value;
+
+      expect(+value0).eq(2);
+    });
+
+    it("should not calculate a - 5", async () => {
+      try {
+        await smcCalculator.run({
+          functionName: 'subtraction',
+          input: {
+            x: 'a',
+            y: 5,
+          },
+        }); 
+      } catch (ex) {
+        expect(ex).to
+        .be.an.instanceOf(Error).and
+        .have.property('code', 306);  
+      }
+    });
+
   });
 
   // it("yet another test", async () => {

@@ -5,6 +5,15 @@ export type TonPackage = {
   abi: {};
 };
 
+class ErrorWithCode extends Error {
+  public code: number;
+
+  constructor(code_: number, message: string) {
+    super(message);
+    this.code = code_;
+  }
+}
+
 export default class TonContract {
   constructor({
     client,
@@ -96,8 +105,9 @@ export default class TonContract {
       // @ts-ignore
       return message.decoded.out_messages[0] as DecodedMessageBody;
     } catch (err) {
-      console.error(err);
-      throw new Error(err);
+      // console.error(err);
+      const { code, message }: { code: number, message: string } = err;
+      throw new ErrorWithCode(code, message);
     }
   }
 
