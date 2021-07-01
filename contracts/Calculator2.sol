@@ -1,7 +1,7 @@
 pragma ton-solidity >= 0.45.0;
 pragma AbiHeader expire;
 
-contract Calculator 
+contract Calculator2 
 {
     // здесь храним историю операций
     int[][] public history;
