@@ -2,10 +2,11 @@ import { expect } from 'chai';
 
 import { configs, networks } from '../configs';
 import { createClient } from '../utils/create-client';
-import { predictAddress, deploy, TDeployParams } from '../utils/deploy';
 import { runMethod } from '../utils/contract';
 import { IMultisigWallet, MultisigWalletWrapper } from '../wrappers/multisig';
 
+import { deployCalculator } from './Calculator.deploy';
+import { deployCalculatorDebot } from './CalculatorDebot.deploy';
 import pkgCalculator from '../ton-packages/Calculator.package';
 
 import type { KeyPair, TonClient } from '@tonclient/core';
@@ -22,24 +23,19 @@ describe("Calculator tests", () => {
     const config = configs[networks.LOCAL];
     client = createClient(config.url);
     wallet = new MultisigWalletWrapper(client, config.multisig);
+    // Temporary KeyPair for testing
     keys = await client.crypto.generate_random_sign_keys();
   });
 
   it("deploy Calculator", async () => {
-    const deployParams: TDeployParams = {
-      keys,
-      tonPackage: pkgCalculator,
-    };
+    addrCalculator = await deployCalculator(client, wallet, keys);
+    console.log('Calculator address:', addrCalculator);
 
-    addrCalculator = await predictAddress(client, deployParams);
+    const addrCalculatorDebot: TAddress
+      = await deployCalculatorDebot(client, wallet, keys, addrCalculator);
 
-    await wallet.sendTransaction({
-      dest: addrCalculator,
-      value: 1_000_000_000,
-      bounce: false,
-    })
-
-    await deploy(client, deployParams);
+    console.log('CalculatorDebot address:', addrCalculatorDebot);
+    console.log('tonos-cli --url http://127.0.0.1 debot fetch', addrCalculatorDebot);
   });
 
   const { abi } = pkgCalculator;

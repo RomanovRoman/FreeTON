@@ -1,36 +1,39 @@
 pragma ton-solidity >= 0.45.0;
 pragma AbiHeader expire;
 
-contract Calculator {
+import "./ICalculator.sol";
 
-    constructor() public 
-    {
-        require(tvm.pubkey() != 0, 101);
-        require(msg.pubkey() == tvm.pubkey(), 102);
-        tvm.accept();
-    }
+contract Calculator is ICalculator {
 
-    function addition (int x, int y) public pure returns (int)
+    function addition(int x, int y)
+      external pure
+      override
+      returns (int)
     {
-        // tvm.accept();
         return x + y;
     }
 
-    function subtraction (int x, int y) public pure returns (int)
+    function subtraction(int x, int y)
+      external pure
+      override
+      returns (int)
     {
-        // tvm.accept();
         return x - y;
     }
 
-    function multiplication (int x, int y) public pure returns (int) 
+    function multiplication(int x, int y)
+      external pure
+      override
+      returns (int)
     {
-        // tvm.accept();
         return x * y;
     }
 
-    function division (int x, int y) public pure returns (int)
+    function division(int x, int y)
+      external pure
+      override
+      returns (int)
     {
-        // tvm.accept();
         return x / y;
     }
 }
