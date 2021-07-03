@@ -1,11 +1,19 @@
 pragma ton-solidity >= 0.45.0;
 pragma AbiHeader expire;
 
+
 contract Calculator2 
 {
     // здесь храним историю операций
     int[][] public history;
     
+    event Calculation(
+        string operation,
+        int x,
+        int y,
+        int result
+    );
+
     modifier accept()
     {
         tvm.accept();
@@ -19,11 +27,24 @@ contract Calculator2
         tvm.accept();
     }
     
-    // Вопрос в том, как нам получить ретёрн
-    function addition (int x, int y) public accept payable returns (int)
+    function push(
+        string operation,
+        int x,
+        int y,
+        int result
+    )
+        private inline
     {
-        history.push([x, y, x + y]);
-        return x + y;
+        history.push([x, y, result]);
+        emit Calculation(operation, x, y, result);
+    }
+
+    // Вопрос в том, как нам получить ретёрн
+    function addition (int x, int y) public accept // payable returns (int r)
+    {
+        // history.push([x, y, x + y]);
+        int r = x + y;
+        push("addition", x, y, r);
     }
 
     function subtraction (int x, int y) public accept payable returns (int)
