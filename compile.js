@@ -10,7 +10,8 @@ if (!shell.which('git')) {
 const smcNames = [
   'Calculator',
   'CalculatorDebot',
-  // 'Calculator2',
+  'Calculator2',
+  'CalculatorDebot2',
 ]
 
 const smcHashes = {}
