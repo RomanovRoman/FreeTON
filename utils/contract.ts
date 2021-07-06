@@ -57,3 +57,19 @@ const runMethod = async (
     throw new ErrorWithCode(code, message);
   }
 }
+
+export
+const buildCall = async (client, abi, function_name, input) => {
+  try {
+    const { body } = await client.abi.encode_message_body({
+      abi: { type: "Contract", value: abi },
+      signer: { type: "None" },
+      is_internal: true,
+      call_set: { function_name, input },
+    });
+    return body;
+  } catch (ex) {
+    const { code, message }: { code: number, message: string } = ex;
+    throw new ErrorWithCode(code, message);
+  }
+}

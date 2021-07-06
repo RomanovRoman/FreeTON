@@ -1,4 +1,5 @@
 import { ResultOfProcessMessage } from '@tonclient/core';
+import { ErrorWithCode } from '../errors';
 import pkgSafeMultisigWallet from '../ton-packages/SafeMultisigWallet.package';
 
 import type {
@@ -22,6 +23,7 @@ interface IMultisigWalletSendTransactionParams {
 
 export
 interface IMultisigWallet {
+  getAddress(): TAddress;
   sendTransaction(
     params: IMultisigWalletSendTransactionParams,
   ): Promise<ResultOfProcessMessage>;
@@ -49,6 +51,10 @@ class MultisigWalletWrapper implements IMultisigWallet {
     this.tonPackage = packages[this.kind];
   }
 
+  public getAddress() {
+    return this.params.address;
+  }
+
   public async sendTransaction(
     params: IMultisigWalletSendTransactionParams,
   ): Promise<ResultOfProcessMessage> {
@@ -68,14 +74,20 @@ class MultisigWalletWrapper implements IMultisigWallet {
     input: any = {},
     keys: KeyPair,
   ): Promise<ResultOfProcessMessage> {
-    return this.client.processing.process_message({
-      message_encode_params: {
-        abi: { type: "Contract", value: this.tonPackage.abi },
-        address: this.params.address,
-        signer: { type: 'Keys', keys },
-        call_set: { function_name, input },
-      },
-      send_events: true,
-    });
+    try {
+      return this.client.processing.process_message({
+        message_encode_params: {
+          abi: { type: "Contract", value: this.tonPackage.abi },
+          address: this.params.address,
+          signer: { type: 'Keys', keys },
+          call_set: { function_name, input },
+        },
+        send_events: true,
+      });
+    } catch (err) {
+      // console.error(err);
+      const { code, message }: { code: number, message: string } = err;
+      throw new ErrorWithCode(code, message);
+    }
   }
 }
